@@ -44,7 +44,7 @@ function createMap() {
         let wrecks = L.layerGroup();
         // loop through the wreck locations and add a marker to the layer group
         randNum.forEach(function (location) {
-            wrecks.addLayer(L.marker(location).bindPopup(`<h3>${location.name}</h3><hr><p>Lat: ${location.lat}<br>Lng: ${location.lng}</p>`));
+            wrecks.addLayer(L.marker(location).bindPopup(`<h3>Name: ${location.name}</h3><hr><p>Type: ${location.type}<br><br>History: ${location.history}</p>`));
         }
         );
         // add the layer group to the map
