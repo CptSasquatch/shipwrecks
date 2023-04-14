@@ -130,34 +130,31 @@ function createMap() {
         );
         // add the layer group to the map
         wrecks.addTo(map);
-        // add a mouse click event that returns the lat and long of the click
+        // add an event listener that will add a marker of the closest wreck to the map where the map is clicked
         map.on('click', function (e) {
-        // create a variable that is the lat and long of the click
-        let clickLocation = [e.latlng.lat, e.latlng.lng];
-        // find the closest wreck to the click
-        let closestWreck = findClosestWreck(clickLocation, wreckData);
-        // add marker to the map at the closest wreck
-        L.marker(closestWreck, {icon:myIcon}).addTo(map).bindPopup(`<h3>Name: ${closestWreck.name}</h3><hr><p>Type: ${closestWreck.type}<br><br>History: ${closestWreck.history}</p>`);
+            // create a variable that is the lat and long of the click and convert it to a turf point   
+            let clickLocation = turf.point([e.latlng.lng, e.latlng.lat]);
+            // create a variable that is an array of the lat and long of the shipwrecks in geojson format
+            let wreckLocations = wreckData.map(wreck => turf.point([wreck.lng, wreck.lat]));
+            // create a variable that is a feature collection of the wreck locations
+            let wreckCollection = turf.featureCollection(wreckLocations);
+            // create a variable that is the closest wreck to the click location
+            let closestWreck = turf.nearestPoint(clickLocation, wreckCollection);
+            // find the wreck in the wreck data that matches the closest wreck
+            let wreck = wreckData.find(wreck => wreck.lat === closestWreck.geometry.coordinates[1] && wreck.lng === closestWreck.geometry.coordinates[0]);
+            // use the wreck data to create a marker for the closest wreck
+            let wreckMarker = L.marker([wreck.lat, wreck.lng], {icon:myIcon}).bindPopup(`<h3>Name: ${wreck.name}</h3><hr><p>Type: ${wreck.type}<br><br>History: ${wreck.history}</p>`);
+            // add the marker to the map
+            wreckMarker.addTo(map);
+        });
     });
-    });
-}
-// create a function that finds the closest wreck to the click
-function findClosestWreck(clickLocation, wreckData) {
-    // convert the wreck data to geojson
-    let wreckGeojson = turf.featureCollection(wreckData);
-    // create a variable that is the click location converted to geojson
-    let clickGeojson = turf.point(clickLocation);
-    // create a variable that is the closest wreck to the click
-    let closestWreck = turf.nearestPoint(clickGeojson, wreckGeojson);
-    // return the closest wreck
-    return closestWreck;
 }
 
 // add a button to the map that will call the createMap function
 let button = L.easyButton({
     states: [{
         stateName: 'add-wrecks',
-        icon: 'myIcon',
+        icon: 'fa-sailboat',
         title: 'Add Shipwrecks',
         onClick: function (btn, map) {
             createMap();
