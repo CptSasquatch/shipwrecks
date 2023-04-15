@@ -1,10 +1,44 @@
-// create the icons
-let myIcon = L.icon({
-    iconUrl: 'static/images/shipwreck_yellow.png',
-    iconSize: [30, 30],
-    iconAnchor: [15, 30],
-    popupAnchor: [0, -30]
-});
+// create the icon variable
+var wreckIcon
+var wreckType
+// create a function that returns the correct icon for the wreck type
+function getIcon(wreckType) {
+    // create a switch statement that will return the correct icon for the wreck type
+    switch (wreckType) {
+        case "Not Charted":
+            wreckIcon = L.icon({
+                iconUrl: "static/images/marker_uncharted.svg",
+                iconSize: [70, 70],
+                iconAnchor: [35, 70],
+                popupAnchor: [0, -70]
+            });
+            return wreckIcon;
+        case "Wreck - Submerged, dangerous to surface navigation":
+            wreckIcon = L.icon({
+                iconUrl: "static/images/marker_danger.svg",
+                iconSize: [70, 70],
+                iconAnchor: [35, 70],
+                popupAnchor: [0, -70]
+            });
+            return wreckIcon;
+        case "Wreck - Submerged, nondangerous":
+            wreckIcon = L.icon({
+                iconUrl: "static/images/marker_safe.svg",
+                iconSize: [70, 70],
+                iconAnchor: [35, 70],
+                popupAnchor: [0, -70]
+            });
+            return wreckIcon;
+        case "Wreck - Visible":
+            wreckIcon = L.icon({
+                iconUrl: "static/images/marker_vis.svg",
+                iconSize: [70, 70],
+                iconAnchor: [35, 70],
+                popupAnchor: [0, -70]
+            });
+            return wreckIcon;
+    }
+}
 // create the tile layers that will be the background of the map
 let satellite = L.tileLayer('https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer/tile/{z}/{y}/{x}', {
 	maxZoom: 20,
@@ -24,7 +58,7 @@ let black = L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/toner/{z}/{x}
 let map = L.map('map', {
     center: [39.5, -98.5],
     zoom: 4,
-    layers: [satellite]
+    layers: [street]
 });
 // create a base layer that holds the maps
 let baseMaps = {
@@ -105,29 +139,22 @@ function createHeatmap() {
         heat.addTo(map);
     });
 }
-// create a function to select a random wreck from the data
-function selectRandom(array) {
-    // create a variable that is a random number between 0 and the length of the wreck data
-    let randomWreck = Math.floor(Math.random() * wreckData.length);
-    // create a variable that is the wreck data at the random index
-    let yourWreck = wreckData[randomWreck];
-    // create a variable that is the lat and long of the wreck
-    let wreckLocation = [yourWreck.lat, yourWreck.lng];
-    return wreckLocation;
-}
 // create a function that produces a map that shows a random selection of 150 shipwrecks
 function createMap() {
     // import the data from the json file
     d3.json("static/data/shipwreck.json").then(function (wreckData) {
         // create a variable that is a random number between 0 and the length of the wreck data minus 150
-        let randNum = wreckData.sort(function () { return 0.5 - Math.random() }).slice(0, 50);
+        let randNum = wreckData.sort(function () { return 0.5 - Math.random() }).slice(0, 100);
         // create a layer group for the wrecks
         let wrecks = L.layerGroup();
         // loop through the wreck locations and add a marker to the layer group
         randNum.forEach(function (location) {
-            wrecks.addLayer(L.marker(location, {icon:myIcon}).bindPopup(`<h3>Name: ${location.name}</h3><hr><p>Type: ${location.type}<br><br>History: ${location.history}</p>`));
+            // call the getIcon function to get the correct icon for the wreck type
+            wreckIcon = getIcon(location.type);
+            // add a marker to the layer group
+            wrecks.addLayer(L.marker(location, {icon:wreckIcon}).bindPopup(`<h3>Name: ${location.name}</h3><hr><p>Type: ${location.type}<br><br>History: ${location.history}</p>`));
         }
-        );
+        );                
         // add the layer group to the map
         wrecks.addTo(map);
         // add an event listener that will add a marker of the closest wreck to the map where the map is clicked
@@ -142,14 +169,15 @@ function createMap() {
             let closestWreck = turf.nearestPoint(clickLocation, wreckCollection);
             // find the wreck in the wreck data that matches the closest wreck
             let wreck = wreckData.find(wreck => wreck.lat === closestWreck.geometry.coordinates[1] && wreck.lng === closestWreck.geometry.coordinates[0]);
+            // call the getIcon function to get the correct icon for the wreck type
+            wreckIcon = getIcon(wreck.type);
             // use the wreck data to create a marker for the closest wreck
-            let wreckMarker = L.marker([wreck.lat, wreck.lng], {icon:myIcon}).bindPopup(`<h3>Name: ${wreck.name}</h3><hr><p>Type: ${wreck.type}<br><br>History: ${wreck.history}</p>`);
+            let wreckMarker = L.marker([wreck.lat, wreck.lng], {icon:wreckIcon}).bindPopup(`<h3>Name: ${wreck.name}</h3><hr><p>Type: ${wreck.type}<br><br>History: ${wreck.history}</p>`);
             // add the marker to the map
             wreckMarker.addTo(map);
         });
     });
 }
-
 // add a button to the map that will call the createMap function
 let button = L.easyButton({
     states: [{
@@ -158,13 +186,10 @@ let button = L.easyButton({
         title: 'Add Shipwrecks',
         onClick: function (btn, map) {
             createMap();
+            btn.state('remove-wrecks');
         }
-    }]
-});
-button.addTo(map);
-// add a button to remove the wrecks from the map
-let removeButton = L.easyButton({
-    states: [{
+    },
+    {
         stateName: 'remove-wrecks',
         icon: 'fa-trash',
         title: 'Remove Shipwrecks',
@@ -174,25 +199,27 @@ let removeButton = L.easyButton({
                     map.removeLayer(layer);
                 }
             });
+            btn.state('add-wrecks');
         }
     }]
 });
-removeButton.addTo(map);
+button.addTo(map);
 // add a button to reveal the heatmap
 let heatmapButton = L.easyButton({
+    // make the background of the button green when user hovers over it
+    buttonStyle: {
+        'background-color': 'green'
+    },
     states: [{
         stateName: 'add-heatmap',
-        icon: 'fa-fire',
+        icon: 'fa-pepper-hot',
         title: 'Add Heatmap',
         onClick: function (btn, map) {
             createHeatmap();
+            btn.state('remove-heatmap');
         }
-    }]
-});
-heatmapButton.addTo(map);
-// add a button to remove the heatmap
-let removeHeatmapButton = L.easyButton({
-    states: [{
+    },
+    {
         stateName: 'remove-heatmap',
         icon: 'fa-trash',
         title: 'Remove Heatmap',
@@ -202,16 +229,8 @@ let removeHeatmapButton = L.easyButton({
                     map.removeLayer(layer);
                 }
             });
+            btn.state('add-heatmap');
         }
     }]
 });
-removeHeatmapButton.addTo(map);
-
-
-
-
-
-
-
-
-
+heatmapButton.addTo(map);
