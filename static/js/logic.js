@@ -1,6 +1,8 @@
 // create the icon variable
 var wreckIcon
 var wreckType
+// declare number of wrecks variable
+var numWrecks
 // create a function that returns the correct icon for the wreck type
 function getIcon(wreckType) {
     // create a switch statement that will return the correct icon for the wreck type
@@ -139,12 +141,40 @@ function createHeatmap() {
         heat.addTo(map);
     });
 }
+// create an array to populate the dropdown menu
+var amounts = ['--Select Amount--', 50, 200, 350, 500, 650, 800, 950, 1100, 1350, 1500];
+// create a function to set number of wrecks to display
+function setNumWrecks() {
+    var dropdownMenu = L.DomUtil.create("select", "dropdown");
+    dropdownMenu.id = "wreckNum";
+    // set the default number of wrecks to display
+    numWrecks = 50;
+    // on initial load, create the map with the default number of wrecks
+    createMap();
+    dropdownMenu.onchange = function () {
+        numWrecks = dropdownMenu.value;
+        createMap();
+        button.state('remove-wrecks');
+    };
+    amounts.forEach(function (amount) {
+        var option = L.DomUtil.create("option", "option");
+        option.value = amount;
+        option.innerHTML = amount;
+        dropdownMenu.appendChild(option);
+    });
+    L.DomUtil.get("map").appendChild(dropdownMenu);
+    // set the default number of wrecks to display
+
+}
+setNumWrecks();
+// allow the user to set the number of wrecks to display
+
 // create a function that produces a map that shows a random selection of 150 shipwrecks
 function createMap() {
     // import the data from the json file
     d3.json("static/data/shipwreck.json").then(function (wreckData) {
-        // create a variable that is a random number between 0 and the length of the wreck data minus 150
-        let randNum = wreckData.sort(function () { return 0.5 - Math.random() }).slice(0, 100);
+        // create a variable that is a random number between 0 and the length of the wreck data minus variable value
+        let randNum = wreckData.sort(function () { return 0.5 - Math.random() }).slice(0, numWrecks);
         // create a layer group for the wrecks
         let wrecks = L.layerGroup();
         // loop through the wreck locations and add a marker to the layer group
@@ -180,15 +210,7 @@ function createMap() {
 }
 // add a button to the map that will call the createMap function
 let button = L.easyButton({
-    states: [{
-        stateName: 'add-wrecks',
-        icon: 'fa-sailboat',
-        title: 'Add Shipwrecks',
-        onClick: function (btn, map) {
-            createMap();
-            btn.state('remove-wrecks');
-        }
-    },
+    states: [
     {
         stateName: 'remove-wrecks',
         icon: 'fa-trash',
@@ -200,6 +222,15 @@ let button = L.easyButton({
                 }
             });
             btn.state('add-wrecks');
+        }
+    },
+    {
+        stateName: 'add-wrecks',
+        icon: 'fa-sailboat',
+        title: 'Add Shipwrecks',
+        onClick: function (btn, map) {
+            createMap();
+            btn.state('remove-wrecks');
         }
     }]
 });
