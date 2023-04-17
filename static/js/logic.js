@@ -9,7 +9,7 @@ function getIcon(wreckType) {
     switch (wreckType) {
         case "Not Charted":
             wreckIcon = L.icon({
-                iconUrl: "static/images/marker_uncharted.svg",
+                iconUrl: "../static/images/marker_uncharted.svg",
                 iconSize: [70, 70],
                 iconAnchor: [35, 70],
                 popupAnchor: [0, -70]
@@ -17,7 +17,7 @@ function getIcon(wreckType) {
             return wreckIcon;
         case "Wreck - Submerged, dangerous to surface navigation":
             wreckIcon = L.icon({
-                iconUrl: "static/images/marker_danger.svg",
+                iconUrl: "../static/images/marker_danger.svg",
                 iconSize: [70, 70],
                 iconAnchor: [35, 70],
                 popupAnchor: [0, -70]
@@ -25,7 +25,7 @@ function getIcon(wreckType) {
             return wreckIcon;
         case "Wreck - Submerged, nondangerous":
             wreckIcon = L.icon({
-                iconUrl: "static/images/marker_safe.svg",
+                iconUrl: "../static/images/marker_safe.svg",
                 iconSize: [70, 70],
                 iconAnchor: [35, 70],
                 popupAnchor: [0, -70]
@@ -33,7 +33,7 @@ function getIcon(wreckType) {
             return wreckIcon;
         case "Wreck - Visible":
             wreckIcon = L.icon({
-                iconUrl: "static/images/marker_vis.svg",
+                iconUrl: "../static/images/marker_vis.svg",
                 iconSize: [70, 70],
                 iconAnchor: [35, 70],
                 popupAnchor: [0, -70]
