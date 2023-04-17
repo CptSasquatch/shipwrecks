@@ -149,8 +149,6 @@ function setNumWrecks() {
     dropdownMenu.id = "wreckNum";
     // set the default number of wrecks to display
     numWrecks = 50;
-    // on initial load, create the map with the default number of wrecks
-    createMap();
     dropdownMenu.onchange = function () {
         numWrecks = dropdownMenu.value;
         createMap();
@@ -163,13 +161,12 @@ function setNumWrecks() {
         dropdownMenu.appendChild(option);
     });
     L.DomUtil.get("map").appendChild(dropdownMenu);
-    // set the default number of wrecks to display
+    // on initial load, create the map with the default number of wrecks
+    createMap();
 
 }
 setNumWrecks();
-// allow the user to set the number of wrecks to display
-
-// create a function that produces a map that shows a random selection of 150 shipwrecks
+// create a function that produces a map that shows a random selection of specified number of shipwrecks
 function createMap() {
     // import the data from the json file
     d3.json("static/data/shipwreck.json").then(function (wreckData) {
