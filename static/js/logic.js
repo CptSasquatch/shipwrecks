@@ -127,7 +127,7 @@ L.control.mousePosition().addTo(map);
 // create a function to add a heatmap layer to the map
 function createHeatmap() {
     // import the data from the json file
-    d3.json("static/data/shipwreck.json").then(function (wreckData) {
+    d3.json("http://127.0.0.1:5000/api/v1.0/shipwreck").then(function (wreckData) {
         // create a variable that is an array of the lat and long of the shipwrecks
         let wreckLocations = wreckData.map(wreck => [wreck.lat, wreck.lng]);
         // create a variable that is a heat layer with the wreck locations
@@ -169,7 +169,7 @@ setNumWrecks();
 // create a function that produces a map that shows a random selection of specified number of shipwrecks
 function createMap() {
     // import the data from the json file
-    d3.json("static/data/shipwreck.json").then(function (wreckData) {
+    d3.json("http://127.0.0.1:5000/api/v1.0/shipwreck").then(function (wreckData) {
         // create a variable that is a random number between 0 and the length of the wreck data minus variable value
         let randNum = wreckData.sort(function () { return 0.5 - Math.random() }).slice(0, numWrecks);
         // create a layer group for the wrecks
