@@ -127,7 +127,7 @@ L.control.mousePosition().addTo(map);
 // create a function to add a heatmap layer to the map
 function createHeatmap() {
     // import the data from the json file
-    d3.json("http://127.0.0.1:5000/api/v1.0/shipwreck/Wreck - Submerged, dangerous to surface navigation").then(function (wreckData) {
+    d3.json("http://127.0.0.1:5000/api/v1.0/shipwreck/latlng").then(function (wreckData) {
         // create a variable that is an array of the lat and long of the shipwrecks
         let wreckLocations = wreckData.map(wreck => [wreck.lat, wreck.lng]);
         // create a variable that is a heat layer with the wreck locations
@@ -169,7 +169,7 @@ setNumWrecks();
 // create a function that produces a map that shows a random selection of specified number of shipwrecks
 function createMap() {
     // import the data from the json file
-    d3.json("http://127.0.0.1:5000/api/v1.0/year_sunk").then(function (wreckData) {
+    d3.json("http://127.0.0.1:5000/api/v1.0/shipwreck").then(function (wreckData) {
         // create a variable that is a random number between 0 and the length of the wreck data minus variable value
         let randNum = wreckData.sort(function () { return 0.5 - Math.random() }).slice(0, numWrecks);
         // create a layer group for the wrecks
@@ -179,7 +179,7 @@ function createMap() {
             // call the getIcon function to get the correct icon for the wreck type
             wreckIcon = getIcon(location.type);
             // add a marker to the layer group
-            wrecks.addLayer(L.marker(location, {icon:wreckIcon}).bindPopup(`<h3>Name: ${location.name}</h3><hr><p>Type: ${location.type}<br><p>Year Sunk: ${location.year_sunk}<br><br>History: ${location.history}</p>`));
+            wrecks.addLayer(L.marker(location, {icon:wreckIcon}).bindPopup(`<h3>Name: ${location.name}</h3><hr><p>Type: ${location.type}<br><br>History: ${location.history}</p>`));
         }
         );                
         // add the layer group to the map
@@ -205,6 +205,26 @@ function createMap() {
         });
     });
 }
+// create a function that adds markers for all the shipwrecks of a specified type
+function addWrecks(type) {
+    // create a variable that uses the endpoint to get the data for the specified wreck type
+    let wreckUrl = `http://127.0.0.1:5000/api/v1.0/shipwreck/${type}`;
+    // import the data from the json file
+    d3.json(wreckUrl).then(function (wreckData) {
+        // create a layer group for the wrecks
+        let wrecks = L.layerGroup();
+        // loop through the wreck locations and add a marker to the layer group
+        wreckData.forEach(function (location) {
+            // call the getIcon function to get the correct icon for the wreck type
+            wreckIcon = getIcon(location.type);
+            // add a marker to the layer group
+            wrecks.addLayer(L.marker(location, {icon:wreckIcon}).bindPopup(`<h3>Name: ${location.name}</h3><hr><p>Type: ${location.type}<br><br>History: ${location.history}</p>`));
+        }
+        );
+        // add the layer group to the map
+        wrecks.addTo(map);
+    });
+}
 // add a button to the map that will call the createMap function
 let button = L.easyButton({
     states: [
@@ -219,6 +239,10 @@ let button = L.easyButton({
                 }
             });
             btn.state('add-wrecks');
+            wreckButton4.state('add-wrecks');
+            wreckButton3.state('add-wrecks');
+            wreckButton2.state('add-wrecks');
+            wreckButton1.state('add-wrecks');
         }
     },
     {
@@ -262,3 +286,123 @@ let heatmapButton = L.easyButton({
     }]
 });
 heatmapButton.addTo(map);
+// add a button to add markers for all the visible shipwrecks
+let wreckButton1 = L.easyButton({
+    states: [{
+        stateName: 'add-wrecks',
+        icon: 'fa-eye',
+        title: 'Add Visible Shipwrecks',
+        onClick: function (btn, map) {
+            addWrecks("Wreck - Visible");
+            btn.state('remove-wrecks');
+        }
+    },
+    {
+        stateName: 'remove-wrecks',
+        icon: 'fa-trash',
+        title: 'Remove Shipwrecks',
+        onClick: function (btn, map) {
+            map.eachLayer(function (layer) {
+                if (layer instanceof L.Marker) {
+                    map.removeLayer(layer);
+                }
+            });
+            btn.state('add-wrecks');
+            wreckButton4.state('add-wrecks');
+            wreckButton2.state('add-wrecks');
+            wreckButton3.state('add-wrecks');
+            button.state('add-wrecks');
+        }
+    }]
+});
+wreckButton1.addTo(map);
+// add a button to add markers for all the dangerous shipwrecks
+let wreckButton2 = L.easyButton({
+    states: [{
+        stateName: 'add-wrecks',
+        icon: 'fa-skull-crossbones',
+        title: 'Add Submerged, Dangerous Shipwrecks',
+        onClick: function (btn, map) {
+            addWrecks("Wreck - Submerged, dangerous to surface navigation");
+            btn.state('remove-wrecks');
+        }
+    },
+    {
+        stateName: 'remove-wrecks',
+        icon: 'fa-trash',
+        title: 'Remove Shipwrecks',
+        onClick: function (btn, map) {
+            map.eachLayer(function (layer) {
+                if (layer instanceof L.Marker) {
+                    map.removeLayer(layer);
+                }
+            });
+            btn.state('add-wrecks');
+            wreckButton4.state('add-wrecks');
+            wreckButton3.state('add-wrecks');
+            wreckButton1.state('add-wrecks');
+            button.state('add-wrecks');
+        }
+    }]
+});
+wreckButton2.addTo(map);
+// add a button to add markers for all the submerged nondangerous shipwrecks
+let wreckButton3 = L.easyButton({
+    states: [{
+        stateName: 'add-wrecks',
+        icon: 'fa-anchor',
+        title: 'Add Submerged, Nondangerous Shipwrecks',
+        onClick: function (btn, map) {
+            addWrecks("Wreck - Submerged, nondangerous");
+            btn.state('remove-wrecks');
+        }
+    },
+    {
+        stateName: 'remove-wrecks',
+        icon: 'fa-trash',
+        title: 'Remove Shipwrecks',
+        onClick: function (btn, map) {
+            map.eachLayer(function (layer) {
+                if (layer instanceof L.Marker) {
+                    map.removeLayer(layer);
+                }
+            });
+            btn.state('add-wrecks');
+            wreckButton4.state('add-wrecks');
+            wreckButton2.state('add-wrecks');
+            wreckButton1.state('add-wrecks');
+            button.state('add-wrecks');
+        }
+    }]
+});
+wreckButton3.addTo(map);
+// add a button to add markers for all the uncharted shipwrecks
+let wreckButton4 = L.easyButton({
+    states: [{
+        stateName: 'add-wrecks',
+        icon: 'fa-question',
+        title: 'Add Uncharted Shipwrecks',
+        onClick: function (btn, map) {
+            addWrecks("Not Charted");
+            btn.state('remove-wrecks');
+        }
+    },
+    {
+        stateName: 'remove-wrecks',
+        icon: 'fa-trash',
+        title: 'Remove Shipwrecks',
+        onClick: function (btn, map) {
+            map.eachLayer(function (layer) {
+                if (layer instanceof L.Marker) {
+                    map.removeLayer(layer);
+                }
+            });
+            btn.state('add-wrecks');
+            wreckButton3.state('add-wrecks');
+            wreckButton2.state('add-wrecks');
+            wreckButton1.state('add-wrecks');
+            button.state('add-wrecks');
+        }
+    }]
+});
+wreckButton4.addTo(map);

@@ -113,6 +113,23 @@ def wreck_by_year():
         wreckdata.append(wreck_dict)
     session.close()
     return jsonify(wreckdata)
+# add an endpoint to query for shipwrecks that returns only lat and lng
+@app.route('/api/v1.0/shipwreck/latlng')
+def wreck_latlng():
+    # Create our session (link) from Python to the DB
+    session = Session(bind=engine)
+    # create a variable to hold the query
+    results = session.query(shipwreck.lat, shipwreck.lng).all()
+    # convert rows to list of dictionaries
+    wreckdata = []
+    # loop through rows and append to list
+    for lat, lng in results:
+        wreck_dict = {}
+        wreck_dict["lat"] = lat
+        wreck_dict["lng"] = lng
+        wreckdata.append(wreck_dict)
+    session.close()
+    return jsonify(wreckdata)
 
     
 # run the app
