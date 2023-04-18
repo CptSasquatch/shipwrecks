@@ -148,7 +148,7 @@ function setNumWrecks() {
     var dropdownMenu = L.DomUtil.create("select", "dropdown");
     dropdownMenu.id = "wreckNum";
     // set the default number of wrecks to display
-    numWrecks = 50;
+    numWrecks = 200;
     dropdownMenu.onchange = function () {
         numWrecks = dropdownMenu.value;
         createMap();
@@ -223,6 +223,8 @@ function addWrecks(type) {
         );
         // add the layer group to the map
         wrecks.addTo(map);
+        // console log the number of wrecks added
+        console.log(`Added ${wreckData.length} "${type}" shipwrecks`);
     });
 }
 // add a button to the map that will call the createMap function
@@ -248,7 +250,7 @@ let button = L.easyButton({
     {
         stateName: 'add-wrecks',
         icon: 'fa-sailboat',
-        title: 'Add Shipwrecks',
+        title: 'Add Random Shipwrecks',
         onClick: function (btn, map) {
             createMap();
             btn.state('remove-wrecks');
