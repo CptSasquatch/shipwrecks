@@ -11,7 +11,8 @@ document.addEventListener("DOMContentLoaded", () => {
     features.forEach(feature => {
         const option = document.createElement('option');
         option.setAttribute('value', feature);
-        option.textContent = feature.charAt(0).toUpperCase() + feature.slice(1);
+        if(feature == 'accuracy')option.textContent = 'Location Accuracy';
+        if(feature == 'type')option.textContent = 'Type';
         featureSelector.appendChild(option);
     });
 
@@ -39,10 +40,21 @@ document.addEventListener("DOMContentLoaded", () => {
             hoverinfo: 'text',
             textposition: 'bottom left',
         }];
+
+        let title;
+        let y_axis_title;
+        if (selectedFeature === 'accuracy') {
+            title = 'Shipwrecks: Location Accuracy vs Year Sunk';
+            y_axis_title = 'Location Accuracy'
+        } else {
+            title = `Shipwrecks: ${selectedFeature.charAt(0).toUpperCase() + selectedFeature.slice(1)} vs Year Sunk`;
+            y_axis_title = selectedFeature.charAt(0).toUpperCase() + selectedFeature.slice(1)
+        }
+
         const layout = {
-            title: `Shipwrecks: ${selectedFeature.charAt(0).toUpperCase() + selectedFeature.slice(1)} vs Year Sunk`,
+            title: title,
             xaxis: {title: {text: 'Year Sunk', standoff: 10}, automargin: true},
-            yaxis: {title: selectedFeature.charAt(0).toUpperCase() + selectedFeature.slice(1), standoff: 10, automargin: true},
+            yaxis: {title: y_axis_title},
             hovermode: 'closest',
         };
     
@@ -61,5 +73,4 @@ document.addEventListener("DOMContentLoaded", () => {
     }).catch((error) => {
         console.log(error);
     });
-    })();
-
+})();
