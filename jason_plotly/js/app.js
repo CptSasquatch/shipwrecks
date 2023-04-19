@@ -30,6 +30,7 @@ function buildPlots(wreckdata) {
     var wrecktype = filteredData.map(wreck => wreck.type);
     // adjust the wreck type to make it more readable
     wrecktype = wrecktype.map(wreck => wreck.replace("Wreck - ", ""));
+    wrecktype = wrecktype.map(wreck => wreck.replace("to surface navigation", ""));
     var wreckcount = wrecktype.reduce(function (acc, curr) {
         if (typeof acc[curr] == 'undefined') {
             acc[curr] = 1;
@@ -57,6 +58,7 @@ function buildPlots(wreckdata) {
     var wrecktype = filteredData.map(wreck => wreck.type);
     // adjust the wreck type to make it more readable
     wrecktype = wrecktype.map(wreck => wreck.replace("Wreck - ", ""));
+    wrecktype = wrecktype.map(wreck => wreck.replace("to surface navigation", ""));
     var wreckcount = wrecktype.reduce(function (acc, curr) {
         if (typeof acc[curr] == 'undefined') {
             acc[curr] = 1;
@@ -94,7 +96,7 @@ function init() {
     dropdownMenu.property("value", "Low");
     // create the initial plots
     buildPlots(wreckdata);
-    console.log("eat shit!!");
+    console.log("eat my shorts!!");
 };
 // create a function to update the plots when the dropdown menu is changed
 function optionChanged() {

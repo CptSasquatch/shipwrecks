@@ -10,18 +10,29 @@
 </head>
 
 <body>
-    <div class="container" style="width: fit-content; text-transform: inherit; width: 90%;">
-        <h1 style="position: relative; width:auto">Shipwrecks in North America</h1>
-        <div class="well" style="background-color:rgb(55, 97, 88, 0.25);border-color:rgba(24, 61, 64, 0.293); color:rgb(24, 65, 65);margin-top:30px;">
-            <h5>Accuracy:</h5>
-            <select id="selDataset" onchange="optionChanged(this.value)"></select>
-          </div>
-        <div id="plot">
-            <!-- Plotly chart will be drawn inside this DIV -->
-        </div>
-        <div id="plot2" style="width: min-content;">
-            <!-- Plotly chart will be drawn inside this DIV -->
-        </div>
+    <div class="row">
+            <div class="container" style="width: fit-content; text-transform: inherit; width: 90%;">
+                <h1 style="position: relative; width:auto">Shipwrecks in North America</h1>
+                <div class="well" style="background-color:rgb(55, 97, 88, 0.25);border-color:rgba(24, 61, 64, 0.293); color:rgb(24, 65, 65);margin-top:30px;">
+                    <h5>Accuracy:</h5>
+                    <select id="selDataset" onchange="optionChanged(this.value)"></select>
+                </div>
+            </div>
+            <div class="col-md-5" style="width: 50%;">
+                <div id="plot" style="width: auto;">
+                    <!-- Plotly chart will be drawn inside this DIV -->
+                </div>
+            </div>
+            <div class="col-md-5">
+                <div id="plot2" style="width: min-content;">
+                    <!-- Plotly chart will be drawn inside this DIV -->
+                </div>
+            </div>
+            <div id="plot3" style="width: min-content;">
+                <!-- Plotly chart will be drawn inside this DIV -->
+            </div>
+    </div>    
+    
 
 </body>
 <script src="https://d3js.org/d3.v5.min.js"></script>
