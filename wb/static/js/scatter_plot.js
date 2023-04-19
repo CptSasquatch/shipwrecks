@@ -54,7 +54,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const layout = {
             title: title,
             xaxis: {title: {text: 'Year Sunk', standoff: 10}, automargin: true},
-            yaxis: {title: y_axis_title},
+            yaxis: {title: y_axis_title, standoff: 10, automargin: true},
             hovermode: 'closest',
         };
     
