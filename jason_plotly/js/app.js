@@ -1,4 +1,4 @@
-// shipwrecks in north america plots
+// shipwrecks in north america plots 
 // add endpoints for the different api calls
 const yearsunk_url = "http://127.0.0.1:5000/api/v1.0/year_sunk";
 const shipwrecks_url = "http://127.0.0.1:5000/api/v1.0/shipwreck";
@@ -80,7 +80,34 @@ function buildPlots(wreckdata) {
         title: "Wreck Type"
     };
     Plotly.newPlot("plot2", data, layout);
-
+    // use the filtered data to build a line chart of the amount of wrecks per year
+    // get the years if the year_sunk is greater than 0
+    var yearsunk = filteredData.map(wreck => wreck.year_sunk);
+    yearsunk = yearsunk.filter(year => year > 0);
+    // get the count of wrecks per year
+    var yearcount = yearsunk.reduce(function (acc, curr) {
+        if (typeof acc[curr] == 'undefined') {
+            acc[curr] = 1;
+        } else {
+            acc[curr] += 1;
+        }
+        return acc;
+    }
+    , {});
+    var yearsunk = Object.keys(yearcount);
+    var yearcount = Object.values(yearcount);
+    var trace3 = {
+        x: yearsunk,
+        y: yearcount,
+        type: "line"
+    };
+    var data = [trace3];
+    var layout = {
+        title: "Wrecks per Year",
+        xaxis: { title: "Year" },
+        yaxis: { title: "Count" }
+    };
+    Plotly.newPlot("plot3", data, layout);
 };
 // create a function to initialize the page
 function init() {
