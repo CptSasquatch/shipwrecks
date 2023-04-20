@@ -1,0 +1,36 @@
+/* Style the feature selector */
+#feature-selector {
+    margin: 10px;
+    font-size: 18px;
+    padding: 5px;
+    border-radius: 5px;
+  }
+  
+  /* Style the scatter plot */
+  #scatter-plot {
+    width: 100%;
+    height: 100vh;
+  }
+  
+  /* Style the Plotly plot title */
+  .gtitle {
+    font-size: 32px;
+    font-weight: bold;
+    text-align: center;
+    margin: 0 0 20px;
+  }
+  
+  /* Style the Plotly axis labels */
+  .g-xtitle, .g-ytitle {
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+    margin: 10px 0;
+  }
+  
+  /* Style the Plotly hover text */
+  .hovertext {
+    font-size: 18px;
+    text-align: left;
+  }
+  
