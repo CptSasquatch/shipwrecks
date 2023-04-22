@@ -457,4 +457,4 @@ function removeSplash() {
     // remove the splash screen
     splashyScreen.remove();
 }
-splashScreen();    
+// splashScreen();  
