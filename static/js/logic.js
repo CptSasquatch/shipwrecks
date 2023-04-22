@@ -408,3 +408,53 @@ let wreckButton4 = L.easyButton({
     }]
 });
 wreckButton4.addTo(map);
+// add a splash screen that will appear when the page is loaded
+let splash = L.easyButton({
+    states: [{
+        stateName: 'splash',
+        icon: 'fa-info-circle',
+        title: 'Click for more information',
+        onClick: function (btn, map) {
+            splashScreen();
+            btn.state('remove-splash');
+        }
+    },
+    {
+        stateName: 'remove-splash',
+        icon: 'fa-trash',
+        title: 'Remove Splash Screen',
+        onClick: function (btn, map) {
+            removeSplash();
+            btn.state('splash');
+        }
+    }]
+});
+splash.addTo(map);
+// create a function for the splash screen
+function splashScreen() {
+    let splashyScreen = L.control({
+        position: 'topleft'
+    });
+    splashyScreen.onAdd = function (map) {
+        let div = L.DomUtil.create('div', 'splash-screen');
+        div.innerHTML = "<div><button class='x-button'>X</button><h1>Shipwreck Map</h1><p>Map showing the location of shipwrecks in North America.</p><ul><li>Add/remove the shipwrecks by clicking on the buttons in the top left corner of the map.</li><li>Zoom in/out by using the buttons in the top left corner of the map.</li><li>Move the map by clicking and dragging the map.</li><li>Click on the markers to see info about the shipwreck.</li><li>Add/remove the heatmap by clicking on the button in the top left corner of the map.</li><li>Click anywhere on the map and a marker will be added to the map of the shipwreck closest to the location clicked.</li></ul></div>";
+        // add an x button to remove the splash screen
+        let xButton = div.getElementsByClassName("x-button")[0];
+        splash.state('remove-splash');
+        xButton.onclick = function () {
+            removeSplash();
+            splash.state('splash');
+        }
+
+        return div;
+    }
+    splashyScreen.addTo(map);
+}
+// create a function to remove the splash screen
+function removeSplash() {
+    // identify the splash screen
+    let splashyScreen = document.getElementsByClassName("splash-screen")[0];
+    // remove the splash screen
+    splashyScreen.remove();
+}
+splashScreen();    
